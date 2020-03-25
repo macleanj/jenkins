@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  jenkins:
+    build:
+      context: ./build
+      dockerfile: Dockerfile
+    image: atlantis/jenkins:lts
+    container_name: jenkins
+    hostname: jenkins
+    ports:
+      - 8082:8080
+      - 50002:50000
+    volumes:
+      - ./jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      pipeline.dev:
+        aliases:
+          - jenkins.pipeline.dev
+    restart: "unless-stopped"
+
+networks:
+  pipeline.dev:
+    driver: bridge

@@ -1,0 +1,95 @@
+version: "2"
+
+# Source for Jenkins Swarm agent setup:
+# https://medium.com/@jagdale0210/deploy-jenkins-master-slave-as-docker-container-ea8557d0d52a
+services:
+  master:
+    image: jenkins/jenkins:2.219
+    container_name: jenkins-master
+    hostname: jenkins-master
+    ports:
+      - 8082:8080
+      - 50000:50000
+    environment:
+      JAVA_OPTS: "-Xmx2048m"
+      # JENKINS_JAVA_OPTIONS: "-Djava.awt.headless=true -Duser.timezone=Europe/Amsterdam"
+    volumes:
+    - ./jenkins-master:/var/jenkins_home
+
+  # # Scalable worker based on automatic Agent Swarm (auto connects to master)
+  # # Scales with: docker-compose scale worker-swarm-dind=2
+  # # Install plugins:
+  # # - Docker
+  # # Manage Jenkins - Confifuration - Add Cloud: Docker
+  # # - Name='docker'
+  # # - Docker Host URI='tcp://docker-in-docker:2375'
+  # # - Enable
+  # worker-swarm-dind:
+  #   image: eeacms/jenkins-slave-dind:17.12-3.16
+  #   depends_on:
+  #     - master
+  #   environment:
+  #     JAVA_OPTS: "-Xmx2048m"
+  #     JENKINS_MASTER: "http://jenkins-master:8080"
+  #     JENKINS_NAME: "worker"
+  #     JENKINS_USER: "cicd"
+  #     JENKINS_PASS: "c1cduser!1A"
+  #     JENKINS_RETRY: "25"
+  #     JENKINS_EXECUTORS: "2"
+  #     JENKINS_LABELS: "docker"
+  #     JENKINS_MODE: "exclusive"
+  #   volumes:
+  #    - /var/run/docker.sock:/var/run/docker.sock
+
+  #     # DOCKER_HOST: "tcp://docker-in-docker:2375"
+  #   # links:
+  #   #   - docker-in-docker
+  #   # volumes:
+  #   # - ./jenkins-worker-swarm:/var/jenkins_home/worker
+
+
+
+  # # Add Node/Worker based on SSH key
+  # # - Name='worker-ssh'
+  # # - Description='SSH Agent'
+  # # - Remote root directory='/home/jenkins/agent'
+  # # - Labels='SSH'
+  # # - Usage='Only build jobs with label expressions matching this node'
+  # # - Launch method=Launch Agent Agents via SSH
+  # #   - Host='pipeline_worker-ssh_1' (because of scalability the "_1" notation is used)
+  # #   - Credentials=jenkins (worker SSH slave) (=local-cloud-rsa)
+  # #   - Known hosts file Verification Strategy
+  # worker-ssh:
+  #   image: jenkins/ssh-slave
+  #   depends_on:
+  #     - master
+  #   environment:
+  #     JENKINS_SLAVE_SSH_PUBKEY: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPM4CTECS79yiXZ+dxg+B2g+uPZhVCBOiECA9OyIC2Cc4g0yCBSDFg3zYkFgqcLdpPhbyjgRFnT9XyvBmOhcfGBpYEVCp9RlKPQR7Yq1UPCjjzznH+pJvhLY5KmeJzn0d0ABm5SKKdOpd0+lFN4Zwbh/XKCNgnuVITfpCubHlb6VH+6EeEH16sLmRttg413YQ0f63RBpAO3xvGlnMdMrij7aQcCylIwtWWzLjJ16FVvjX2zXrxA3We36Z0kpEWYXd/7S1YuMl/l23eZpRoiE0REanKap1opsgjtZZBzUcSJHsMBUtca87V6Tb518l/0s2i3e2wj7WxZLFg5oS4XsyP jerome@MACmaclean.mac-lean.com"
+  #   # /home/jenkins does not have to be mounted. This dir is also used for temp build data for remoting.
+  #   # volumes:
+  #   # - ./jenkins-worker-ssh:/home/jenkins
+
+  # # Add Node/Worker based on JNLP
+  # # Enable agent in Manage Jenkikns - Configure Global Security (fixed on 50000)
+  # # - Name='worker-jnlp'
+  # # - Description='JNLP Agent'
+  # # - Remote root directory='/home/jenkins/agent'
+  # # - Labels='JNLP'
+  # # - Usage='Only build jobs with label expressions matching this node'
+  # # - Launch method=Launch agent by connecting it to the master
+  # #   - Leave all default
+  # # Save and a secret will be generated.
+  # # Use name secret in ENV vars below.
+  # worker-jnlp:
+  #   image: jenkins/jnlp-slave
+  #   depends_on:
+  #     - master
+  #   environment:
+  #     JENKINS_URL: "http://jenkins-master:8080"
+  #     # JENKINS_TUNNEL: (HOST:PORT) connect to this agent host and port instead of Jenkins server, assuming this one do route TCP traffic to Jenkins master. Useful when when Jenkins runs behind a load balancer, reverse proxy, etc.
+  #     JENKINS_SECRET: "457f880228be5c44a9f2e3ebae0f9d8c82916781f827f7e68f254c659502cbd9"
+  #     JENKINS_AGENT_NAME: "worker-jnlp"
+  #     JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
+  #   # /home/jenkins does not have to be mounted. This dir is also used for temp build data for remoting.
+  #   # volumes:
+  #   # - ./jenkins-worker-jnlp:/home/jenkins

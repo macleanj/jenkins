@@ -1,0 +1,17 @@
+# Jenkins
+/jenkins/*
+/jenkins-master
+/jenkins-master.org
+/jenkins-master.test
+
+######################
+# Terraform
+######################
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
