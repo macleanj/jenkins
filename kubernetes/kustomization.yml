@@ -1,0 +1,9 @@
+secretGenerator:
+  - name: regcred-quay
+    files:
+      - .dockerconfigjson=secrets/futurice-insights-futurice-cicd-insights-auth.json
+    type: kubernetes.io/dockerconfigjson
+resources:
+  - jenkins-namespace.yml
+  - jenkins-admin-user.yml
+  - jenkins-user.yml
