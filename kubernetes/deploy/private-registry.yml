@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jenkins-nodejs8-helper
+spec:
+  serviceAccountName: jenkins # <- credentials are linked to the serviceAccount
+  containers:
+  - name: jenkins-nodejs8-helper
+    image: reg-dhc.app.corpintra.net/futurice-insights/jenkins-nodejs8-helper:8.17.0.1
+    imagePullPolicy: Always
