@@ -90,12 +90,12 @@ With Kubernetes plugin the following needs to be performed:
 - Kubernetes plugin installed
 - Manage Jenkins - Configure Settings - Cloud (at the end) - Select Kubernetes
 Fill in the following information (changes with every cluster create):
-- Kubernetes URL (proxy)
+- Kubernetes URL (see script): Example: https://10.16.0.10:6443
 - Kubernetes server certificate key (blank)
 - Disable SSL check
 - Kubernetes Namespace: jenkins
-- Credentials (see script in the k8 lab (passphrase "jenkins")
-- See also the Kubernetes lab: Jenkins URL: http://10.0.2.2:8082 (this is the VirtualBox Service IP. From within POD: traceroute 8.8.8.8 from vagrant/kubernetes).
+- Credentials (see script)
+- Jenkins URL: http://10.0.2.2:8082 (this is the VirtualBox Service IP. From within POD: traceroute 8.8.8.8 from vagrant/kubernetes).
 
 ## OpenShift Cloud
 The default Jenkins template might give permission errors when the default are used. The deployment yaml needs to be adapted using a custom image.
